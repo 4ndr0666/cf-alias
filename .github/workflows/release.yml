@@ -69,3 +69,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUR_KEY: ${{ secrets.AUR_KEY }}
+          GPG_FINGERPRINT: A81FA5D0033F6EACD61808CD426D822F91067068
