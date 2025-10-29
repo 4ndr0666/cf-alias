@@ -24,7 +24,7 @@ archives:
 
 signs:
   - artifacts: checksum
-    args: ["-u", "6A34CFEE77FE8257C3BB92FE24C3FC5D6987904B", "--output", "${signature}", "--detach-sign", "${artifact}"]
+    args: ["-u", "A81FA5D0033F6EACD61808CD426D822F91067068", "--output", "${signature}", "--detach-sign", "${artifact}"]
 
 nfpms:
   - homepage: https://github.com/4ndr0666/cf-alias
