@@ -1,32 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
+TARGET_DIR="target/release"
+DIST_DIR="dist/cf-alias_linux_amd64_v1"
 
-target="$1"
+echo "[cf-alias] preparing Arch-native release artifacts"
 
-goTargetToRust() {
-	if [[ "$target" == "darwin_amd64_v1" ]]; then
-		echo "x86_64-apple-darwin"
-	elif [[ "$target" == "darwin_arm64" ]]; then
-		echo "aarch64-apple-darwin"
-	elif [[ "$target" == "linux_amd64_v1" ]]; then
-		echo "x86_64-unknown-linux-gnu"
-	elif [[ "$target" == "linux_arm64" ]]; then
-		echo "aarch64-unknown-linux-gnu"
-	elif [[ "$target" == "windows_amd64_v1" ]]; then
-		echo "x86_64-pc-windows-gnu"
-	else
-		echo "goreleaser-dist.sh is not prepared to handle builds for ${target}. Please update script."
-		exit 1
-	fi
-}
+mkdir -p "${DIST_DIR}"
 
-rm -rf "./dist/cf-alias_${target}"
-mkdir -p "./dist/cf-alias_${target}"
+# Copy binary built natively for Arch (x86_64-linux-gnu)
+cp "${TARGET_DIR}/cf-alias" "${DIST_DIR}/cf-alias"
 
-rustbin="./target/$(goTargetToRust)/release/cf-alias"
-if [[ "$target" == "windows_amd64_v1" ]]; then
-	rustbin="${rustbin}.exe"
+# Copy metadata for distribution consistency
+if [[ -f "LICENSE" ]]; then
+  cp LICENSE "${DIST_DIR}/"
+fi
+if [[ -f "THIRDPARTY.json" ]]; then
+  cp THIRDPARTY.json "${DIST_DIR}/"
 fi
 
-cp "$rustbin" "./dist/cf-alias_${target}/"
+echo "[cf-alias] release package ready in ${DIST_DIR}"
