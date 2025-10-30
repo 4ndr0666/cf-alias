@@ -4,10 +4,11 @@ version: 2
 project_name: cf-alias
 
 builds:
-  - id: cf-alias
-    main: ./tools/goreleaser.go
-    goos: [linux]
-    goarch: [amd64]
+  - main: ./tools/goreleaser.go
+    goos:
+      - linux
+    goarch:
+      - amd64
     hooks:
       post: ./tools/goreleaser-dist.sh {{ .Target }}
 
@@ -18,8 +19,8 @@ snapshot:
   version_template: "{{ .Tag }}-next"
 
 archives:
-  - id: release-archive
-    formats: [tar.gz]
+  - formats:
+      - tar.gz
     files:
       - LICENSE
       - completions/cf-alias.bash
@@ -37,35 +38,41 @@ signs:
       - "${artifact}"
 
 nfpms:
-  - id: linux-packages
-    homepage: https://github.com/4ndr0666/cf-alias
+  - homepage: https://github.com/4ndr0666/cf-alias
     description: >
       Create Cloudflare email alias' directly from your terminal or Alfred.
     maintainer: 4ndr0666
     vendor: 4ndr0666
-    formats: [deb, rpm]
+    formats:
+      - deb
+      - rpm
     contents:
       - src: ./completions/cf-alias.bash
         dst: /usr/share/bash-completion/completions/cf-alias
-        file_info: { mode: 0644 }
+        file_info:
+          mode: 0644
       - src: ./completions/_cf-alias
         dst: /usr/share/zsh/site-functions/_cf-alias
-        file_info: { mode: 0644 }
+        file_info:
+          mode: 0644
       - src: ./completions/cf-alias.fish
         dst: /usr/share/fish/vendor_completions.d/cf-alias.fish
-        file_info: { mode: 0644 }
+        file_info:
+          mode: 0644
       - src: ./LICENSE
         dst: /usr/share/doc/cf-alias/LICENSE
-        file_info: { mode: 0644 }
+        file_info:
+          mode: 0644
 
 aurs:
-  - id: aur-package
-    name: cf-alias-bin
+  - name: cf-alias-bin
     homepage: https://github.com/4ndr0666/cf-alias
     description: >
       Create Cloudflare email alias' directly from your terminal or Alfred.
-    maintainers: ["4ndr0666"]
-    contributors: ["4ndr0666"]
+    maintainers:
+      - "4ndr0666"
+    contributors:
+      - "4ndr0666"
     license: MIT
     private_key: "{{ .Env.AUR_KEY }}"
     git_url: ssh://aur@aur.archlinux.org/cf-alias-bin.git
