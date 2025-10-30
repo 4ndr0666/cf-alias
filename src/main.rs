@@ -7,8 +7,12 @@ mod config;
 mod utils;
 
 use std::io;
+use std::fs;
+use std::path::PathBuf;
 
 use anyhow::Result;
+use clap::{Arg, Command};
+use clap_complete::{generate_to, Shell};
 
 async fn list_routes() -> Result<String> {
     let routes = cloudflare::list_routes().await?;
@@ -17,109 +21,106 @@ async fn list_routes() -> Result<String> {
         .map(|e| return e.email.to_owned())
         .collect::<Vec<String>>();
     emails.sort();
-
     return Ok(emails.join("\n"));
 }
 
 async fn create(email_prefix: String) -> Result<String> {
     let email = utils::get_email(email_prefix)?;
     cloudflare::create_route(email.to_owned()).await?;
-
     return Ok(email);
 }
 
-fn build_cli() -> clap::Command<'static> {
-    return clap::Command::new("cf-alias")
+fn build_cli() -> Command {
+    return Command::new("cf-alias")
         .about("CLI interface for Cloudflare Email Routing")
         .version(env!("CFA_VERSION"))
-        .setting(clap::AppSettings::SubcommandRequiredElseHelp)
+        .subcommand_required(true)
         .subcommand(
-            clap::Command::new("alfred")
+            Command::new("alfred")
                 .about("Commands for the Alfred extension")
                 .subcommand(
-                    clap::Command::new("clipboard")
+                    Command::new("clipboard")
                         .about("Copys email to clipboard.")
                         .arg(
-                            clap::Arg::new("email")
+                            Arg::new("email")
                                 .short('e')
                                 .long("email")
                                 .help("Email to copy")
                                 .required(true)
-                                .takes_value(true)
-                                .multiple_values(false),
+                                .num_args(1),
                         ),
                 )
                 .subcommand(
-                    clap::Command::new("create")
+                    Command::new("create")
                         .about("Creates a new forwarding email")
                         .arg(
-                            clap::Arg::new("email-prefix")
+                            Arg::new("email-prefix")
                                 .short('e')
                                 .long("email-prefix")
                                 .help("Forwarding email prefix to create")
                                 .required(true)
-                                .takes_value(true)
-                                .multiple_values(false),
+                                .num_args(1),
                         ),
                 )
                 .subcommand(
-                    clap::Command::new("create-list")
+                    Command::new("create-list")
                         .about("Autocomplete command used for creating new emails")
                         .arg(
-                            clap::Arg::new("query")
+                            Arg::new("query")
                                 .short('q')
                                 .long("query")
                                 .help("Command query or email prefix to be used when creating a new email")
                                 .required(false)
-                                .takes_value(true)
-                                .multiple_values(false),
+                                .num_args(1),
                         ),
                 )
                 .subcommand(
-                    clap::Command::new("manage").about("Opens the Cloudflare Email management UI."),
+                    Command::new("manage")
+                        .about("Opens the Cloudflare Email management UI.")
                 )
-                .subcommand(clap::Command::new("list").about("List existing email forwarders")),
+                .subcommand(
+                    Command::new("list")
+                        .about("List existing email forwarders")
+                ),
         )
-         .subcommand(
-                clap::Command::new("create")
-                    .about("Creates a new forwarding email")
-                    .arg_required_else_help(true)
-                    .arg(
-                        clap::Arg::new("email-prefix")
-                            .short('e')
-                            .long("email-prefix")
-                            .help("Forwarding email prefix to create")
-                            .required(false)
-                            .takes_value(true)
-                            .multiple_values(false),
-                    )
-                    .arg(
-                        clap::Arg::new("random")
-                            .short('r')
-                            .long("random")
-                            .help("Generate a random email address")
-                            .required(false)
-                            .multiple_values(false),
-                    ),
-
-            )
         .subcommand(
-            clap::Command::new("completion")
-                .about("Generates shell completions")
+            Command::new("create")
+                .about("Creates a new forwarding email")
+                .arg_required_else_help(true)
                 .arg(
-                    clap::Arg::new("shell")
+                    Arg::new("email-prefix")
+                        .short('e')
+                        .long("email-prefix")
+                        .help("Forwarding email prefix to create")
+                        .required(false)
+                        .num_args(1),
+                )
+                .arg(
+                    Arg::new("random")
+                        .short('r')
+                        .long("random")
+                        .help("Generate a random email address")
+                        .required(false)
+                        .num_args(0),
+                ),
+        )
+        .subcommand(
+            Command::new("completion")
+                .about("Generates and installs shell completions automatically")
+                .arg(
+                    Arg::new("shell")
                         .short('s')
                         .long("shell")
                         .help("Which shell to generate completions for.")
-                        .value_parser(clap::builder::EnumValueParser::<clap_complete::Shell>::new())
-                        .required(true),
+                        .value_parser(clap::builder::EnumValueParser::<Shell>::new())
+                        .required(false)
+                        .num_args(1),
                 ),
         )
-        .subcommand(clap::Command::new("list").about("List existing email routes."));
-}
-
-fn print_completions<G: clap_complete::Generator>(gen: G, app: &mut clap::Command) {
-    clap_complete::generate(gen, app, app.get_name().to_string(), &mut io::stdout());
+        .subcommand(
+            Command::new("list")
+                .about("List existing email routes.")
+        );
 }
 
 async fn parse_cli() -> Result<()> {
@@ -144,7 +145,10 @@ async fn parse_cli() -> Result<()> {
                     println!("{}", res);
                 }
                 Some(("clipboard", run_matches)) => {
-                    let email = run_matches.get_one::<String>("email").unwrap().to_string();
+                    let email = run_matches
+                        .get_one::<String>("email")
+                        .unwrap()
+                        .to_string();
                     alfred::copy_to_clopboard(email);
                 }
                 Some(("manage", _)) => {
@@ -163,17 +167,38 @@ async fn parse_cli() -> Result<()> {
                 .get_one::<String>("email-prefix")
                 .unwrap_or_else(|| return &default_res)
                 .to_string();
-            if run_matches.is_present("random") {
+            if run_matches.contains_id("random") {
                 email_prefix = "random".to_string();
             }
             let email = create(email_prefix).await?;
             println!("Created new email: {}", email);
         }
         Some(("completion", run_matches)) => {
-            if let Ok(generator) = run_matches.value_of_t::<clap_complete::Shell>("shell") {
-                eprintln!("Generating completion file for {}...", generator);
-                let mut app = build_cli();
-                print_completions(generator, &mut app);
+            use clap_complete::{generate, Shell};
+            let mut app = build_cli();
+            let outdir = PathBuf::from("completions");
+            fs::create_dir_all(&outdir).ok();
+            let shells = if let Some(shell) = run_matches.get_one::<Shell>("shell").copied() {
+                vec![shell]
+            } else {
+                vec![Shell::Bash, Shell::Zsh, Shell::Fish]
+            };
+            for shell in shells {
+                let target = generate_to(shell, &mut app, "cf-alias", &outdir)
+                    .expect("failed to write completion");
+                eprintln!("Generated completion: {}", target.display());
+                if shell == Shell::Zsh {
+                    let sys_path = PathBuf::from("/usr/share/zsh/site-functions/_cf-alias");
+                    if fs::copy(&target, &sys_path).is_ok() {
+                        eprintln!("Installed Zsh completion to {}", sys_path.display());
+                    } else {
+                        eprintln!(
+                            "No permission to write {}, leaving file in {:?}",
+                            sys_path.display(),
+                            outdir
+                        );
+                    }
+                }
             }
         }
         Some(("list", _)) => {
@@ -182,7 +207,6 @@ async fn parse_cli() -> Result<()> {
         }
         _ => unreachable!(),
     }
-
     return Ok(());
 }
 
