@@ -7,7 +7,7 @@ mod config;
 mod utils;
 
 use anyhow::Result;
-use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
+use clap::{App, AppSettings, Arg, SubCommand};
 use clap_complete::{generate_to, Shell};
 use std::{fs, path::PathBuf};
 
