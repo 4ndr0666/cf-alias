@@ -3,6 +3,15 @@ name = "cf-alias"
 version = "0.1.9"
 edition = "2021"
 rust-version = "1.63.0"
+description = "Create Cloudflare email alias' directly from your terminal or Alfred."
+license = "MIT"
+homepage = "https://github.com/4ndr0666/cf-alias"
+repository = "https://github.com/4ndr0666/cf-alias"
+readme = "README.md"
+authors = ["4ndr0666 <01_dolor.loftier@icloud.com>"]
+keywords = ["cloudflare", "email", "alias", "alfred", "cli"]
+categories = ["command-line-utilities"]
+default-run = "cf-alias"
 
 [dependencies]
 anyhow = "=1.0.65"
@@ -31,3 +40,18 @@ dprint = "0.30.3"
 rust-script = "=0.21.0"
 
 [package.metadata.commands]
+fmt = "cargo fmt --all"
+lint = "cargo clippy --all-targets --all-features -- -D warnings"
+test = "cargo test --all --all-features"
+check = "cargo check --release"
+build = "cargo build --release"
+run = "cargo run --release"
+completions = "cargo run --release -- completion"
+release = "goreleaser release --snapshot --skip=publish,sign --clean"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
