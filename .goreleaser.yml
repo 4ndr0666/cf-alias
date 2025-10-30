@@ -34,7 +34,7 @@ signs:
   - artifacts: checksum
     args:
       - -u
-      - A81FA5D0033F6EACD61808CD426D822F91067068
+      - 888EAEEFF89E8CAFACAF191873DD9742274C7549
       - --output
       - ${signature}
       - --detach-sign
@@ -77,8 +77,8 @@ aurs:
     contributors:
       - 4ndr0666
     license: MIT
-    private_key: '{{ .Env.AUR_KEY_PATH }}'
     git_url: ssh://aur@aur.archlinux.org/cf-alias-bin.git
+    private_key: '{{ .Env.AUR_KEY }}'
     package: |
       install -Dm755 "./cf-alias" \
         "${pkgdir}/usr/bin/cf-alias"
