@@ -105,6 +105,6 @@ release:
   prerelease: false
   draft: false
   replace_existing_draft: true
-  overwrite: true
+    overwrite: true
   footer: |
     Built and published by GoReleaser on {{ .Date }} (commit {{ .FullCommit }}).
