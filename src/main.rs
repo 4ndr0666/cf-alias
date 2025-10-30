@@ -111,7 +111,7 @@ fn build_cli() -> clap::Command<'static> {
                         .short('s')
                         .long("shell")
                         .help("Which shell to generate completions for.")
-                        .possible_values(clap_complete::Shell::possible_values())
+                        .value_parser(clap::builder::EnumValueParser::<clap_complete::Shell>::new())
                         .required(true),
                 ),
         )
