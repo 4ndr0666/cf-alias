@@ -98,4 +98,10 @@ changelog:
   use: git
 
 release:
-  disable: true
+  github:
+    owner: 4ndr0666
+    name: cf-alias
+  prerelease: false
+  draft: false
+  footer: |
+    Built and published by GoReleaser on {{ .Date }} (commit {{ .FullCommit }}).
