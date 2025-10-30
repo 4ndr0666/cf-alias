@@ -77,7 +77,7 @@ aurs:
     contributors:
       - 4ndr0666
     license: MIT
-    private_key: '{{ .Env.AUR_KEY }}'
+    private_key: '{{ .Env.AUR_KEY_PATH }}'
     git_url: ssh://aur@aur.archlinux.org/cf-alias-bin.git
     package: |
       install -Dm755 "./cf-alias" \
