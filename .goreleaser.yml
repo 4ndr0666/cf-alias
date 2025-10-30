@@ -92,4 +92,4 @@ aurs:
         "${pkgdir}/usr/share/fish/vendor_completions.d/cf-alias.fish"
 
 changelog:
-  use: github-native
+  use: git
