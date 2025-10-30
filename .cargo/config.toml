@@ -1,5 +1,23 @@
-[source.crates-io]
-replace-with = "self"
+# Canonical Cargo configuration for cf-alias
+# Maintains reproducibility without shadowing crates.io
 
-[source.self]
-directory = "/home/git/clone/4ndr0666/cf-alias"
+[net]
+git-fetch-with-cli = true
+
+[source.crates-io]
+registry = "https://github.com/rust-lang/crates.io-index"
+
+# Preserve deterministic builds but allow external crates
+[build]
+target-dir = "target"
+incremental = false
+rustflags = ["-C", "opt-level=3"]
+
+[term]
+color = "auto"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
