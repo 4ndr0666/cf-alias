@@ -1,0 +1,5 @@
+[source.crates-io]
+replace-with = "self"
+
+[source.self]
+directory = "/home/git/clone/4ndr0666/cf-alias"

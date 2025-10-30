@@ -1,5 +1,12 @@
 /target
+target/
 *.txt
+*.lock
+*.tar.gz
+*.deb
+*.rpm
+.DS_Store
+.env
 .bin/
 dist/
 completions/
