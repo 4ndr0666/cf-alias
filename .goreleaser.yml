@@ -34,7 +34,7 @@ signs:
   - artifacts: checksum
     args:
       - -u
-      - 888EAEEFF89E8CAFACAF191873DD9742274C7549
+      - A81FA5D0033F6EACD61808CD426D822F91067068
       - --output
       - ${signature}
       - --detach-sign
