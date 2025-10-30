@@ -1,9 +1,14 @@
-# cf-alias
+# ⚡ cf-alias
 
-[![Release](https://img.shields.io/github/v/release/4ndr0666/cf-alias)](https://github.com/4ndr0666/cf-alias/releases)
+[![Release](https://img.shields.io/github/v/release/4ndr0666/cf-alias?color=4CAF50)](https://github.com/4ndr0666/cf-alias/releases)
+[![AUR](https://img.shields.io/aur/version/cf-alias-bin?color=1793d1&label=AUR)](https://aur.archlinux.org/packages/cf-alias-bin)
+[![Build](https://img.shields.io/github/actions/workflow/status/4ndr0666/cf-alias/release.yml?label=CI/CD&logo=github)](https://github.com/4ndr0666/cf-alias/actions)
 
-> Create Cloudflare email aliases directly from your terminal or Alfred.
+> **Create Cloudflare Email Routing aliases directly from your terminal or Alfred.**
 
+---
+
+### Contents
 - [Overview](#overview)
 - [Install](#install)
   - [Source](#source)
@@ -11,92 +16,26 @@
 - [Usage](#usage)
   - [CLI](#cli)
   - [Alfred](#alfred)
+- [Completions](#completions)
 - [License](#license)
 
-## Overview
+---
 
-`cf-alias` lets you create and manage Cloudflare Email Routing aliases from the command line.  
-It provides an interface to list, generate, or remove forwarding aliases linked to your Cloudflare account.  
+## 🚀 Overview
 
-The project uses an undocumented Cloudflare API and is offered as-is.
+`cf-alias` is a minimalist CLI for **Cloudflare Email Routing** that brings domain alias management into your terminal or Alfred workflow.  
+It uses Cloudflare’s *undocumented* routing endpoints — so treat it as an advanced tool for developers comfortable working close to the metal.
+
+Built in **Rust**, deployed via **GoReleaser**, and distributed on the **Arch User Repository (AUR)**.
+
+### Highlights
+
+- 🧩 Manage Cloudflare aliases directly from CLI  
+- ⚙️ Integrated Alfred workflow (`alfred/mx.alfredworkflow`)  
+- 💥 Zero-config shell completions for Bash, Zsh, and Fish  
+- 🔒 100% reproducible builds with signed releases  
 
 ---
 
-<!-- command-help start -->
+## 🧭 Command Reference
 
-```
-
-cf-alias v0.1.9
-CLI interface for Cloudflare Email Routing
-
-USAGE:
-cf-alias <SUBCOMMAND>
-
-OPTIONS:
--h, --help       Print help information
--V, --version    Print version information
-
-SUBCOMMANDS:
-alfred        Commands for the Alfred extension
-completion    Generates shell completions
-create        Creates a new forwarding email
-help          Print this message or the help of the given subcommand(s)
-list          List existing email routes.
-
-````
-
-<!-- command-help end -->
-
----
-
-## Install
-
-### Source
-
-```bash
-git clone https://github.com/4ndr0666/cf-alias.git
-cd cf-alias
-cargo install --path .
-````
-
-### Arch (AUR)
-
-Prebuilt binary available through the Arch User Repository:
-
-```bash
-yay -S cf-alias-bin
-```
-
----
-
-## Usage
-
-Create a configuration file in `$HOME/.cf-alias.json` with the following keys:
-
-```json
-{
-  "cloudflare_account_id": "cloudflare-account-id",
-  "cloudflare_forward_email": "example@gmail.com",
-  "cloudflare_root_domain": "example.com",
-  "cloudflare_token": "cloudflare-api-token",
-  "cloudflare_zone": "zone-id-for-example.com"
-}
-```
-
-### CLI
-
-* `cf-alias list` — list existing forwarders.
-* `cf-alias create --email-prefix github` — create `github@example.com`.
-* `cf-alias create --random` — generate a random alias.
-
-### Alfred
-
-The Alfred workflow is located in [`alfred/mx.alfredworkflow`](alfred/mx.alfredworkflow).
-Download and import it into Alfred. Use `mx` as a prefix to trigger commands.
-
----
-
-## License
-
-Licensed under the [MIT License](LICENSE).
-See [`THIRDPARTY.json`](THIRDPARTY.json) and [`THIRDPARTY.md`](THIRDPARTY.md) for dependency license metadata.

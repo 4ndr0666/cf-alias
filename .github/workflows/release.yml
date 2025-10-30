@@ -62,6 +62,10 @@ jobs:
           ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
 
       - name: Install GoReleaser
+      - name: Push to AUR
+        run: |
+          chmod +x ./tools/aur-push.sh
+          ./tools/aur-push.sh
         uses: goreleaser/goreleaser-action@v5
         with:
           version: latest
