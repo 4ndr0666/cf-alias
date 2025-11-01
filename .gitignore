@@ -13,3 +13,4 @@ completions/
 THIRDPARTY.md
 THIRDPARTY.yml
 /target
+*lock
