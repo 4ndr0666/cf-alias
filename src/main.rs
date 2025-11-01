@@ -137,7 +137,10 @@ async fn parse_cli() -> Result<()> {
             _ => {}
         },
         Some(("create", run_matches)) => {
-            let mut email_prefix = run_matches.value_of("email-prefix").unwrap_or("").to_string();
+            let mut email_prefix = run_matches
+                .value_of("email-prefix")
+                .unwrap_or("")
+                .to_string();
             if run_matches.is_present("random") {
                 email_prefix = "random".to_string();
             }
