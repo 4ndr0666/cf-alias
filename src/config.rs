@@ -14,15 +14,31 @@ pub struct Config {
 }
 
 pub fn load_config() -> Result<Config> {
-    let file_path = dirs::home_dir().unwrap().join(".cf-alias.json");
+    let dir_path = dirs::home_dir().unwrap().join(".cf-alias");
+    if !dir_path.exists() {
+        fs::create_dir_all(&dir_path)?;
+    }
+
+    let file_path = dir_path.join("config.json");
     if !file_path.exists() {
         return Err(anyhow!(
-            "$HOME/.cf-alias does not exist. Refer to the documentation to get started."
+            "Configuration file not found. Please create ~/.cf-alias/config.json and add your Cloudflare details. Refer to the documentation for more information."
         ));
     }
 
     let config_str = fs::read_to_string(file_path)?;
     let config: Config = serde_json::from_str(&config_str)?;
+
+    if config.cloudflare_account_id.is_empty()
+        || config.cloudflare_forward_email.is_empty()
+        || config.cloudflare_root_domain.is_empty()
+        || config.cloudflare_token.is_empty()
+        || config.cloudflare_zone.is_empty()
+    {
+        return Err(anyhow!(
+            "Configuration file is empty. Please edit ~/.cf-alias/config.json and add your Cloudflare details."
+        ));
+    }
 
     return Ok(config);
 }

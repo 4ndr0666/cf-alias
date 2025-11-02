@@ -28,7 +28,7 @@ async fn create(email_prefix: String) -> Result<String> {
 }
 
 fn build_cli<'help>() -> App<'help> {
-    App::new("cf-alias")
+    return App::new("cf-alias")
         .about("CLI interface for Cloudflare Email Routing")
         .version(env!("CFA_VERSION"))
         .setting(AppSettings::SubcommandRequiredElseHelp)
@@ -190,5 +190,8 @@ async fn parse_cli() -> Result<()> {
 
 #[tokio::main]
 async fn main() {
-    parse_cli().await.unwrap();
+    if let Err(e) = parse_cli().await {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
 }
